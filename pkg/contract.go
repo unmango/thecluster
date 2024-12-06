@@ -8,8 +8,7 @@ import (
 
 type Context interface {
 	context.Context
-	Root() string
-	Fs() afero.Fs
+	Workspace
 }
 
 type Named interface {
@@ -19,4 +18,9 @@ type Named interface {
 type Workspace interface {
 	Named
 	Fs() afero.Fs
+	Parse(string) (string, error)
+}
+
+type Loader interface {
+	Load(Context, string) (Workspace, error)
 }

@@ -26,7 +26,7 @@ func NewList() *cobra.Command {
 			}
 
 			for w := range ws {
-				fmt.Println(w.Name())
+				fmt.Println(w)
 			}
 		},
 	}

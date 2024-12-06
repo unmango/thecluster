@@ -2,31 +2,29 @@ package context
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/spf13/afero"
 	"github.com/unmango/go/vcs/git"
+	"github.com/unmango/thecluster/internal"
 	"github.com/unmango/thecluster/pkg"
 )
 
 type repo struct {
 	context.Context
-	root string
-	fs   afero.Fs
-}
-
-func (ctx *repo) Fs() afero.Fs {
-	return ctx.fs
-}
-
-func (ctx *repo) Root() string {
-	return ctx.root
+	internal.Workspace
 }
 
 func LocalRepo(ctx context.Context) (pkg.Context, error) {
-	if root, err := git.Root(ctx); err != nil {
-		return nil, err
-	} else {
-		fs := afero.NewBasePathFs(afero.NewOsFs(), root)
-		return &repo{ctx, root, fs}, nil
+	root, err := git.Root(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("locating git root: %w", err)
 	}
+
+	ws, err := internal.LoadWorkspace(afero.NewOsFs(), root)
+	if err != nil {
+		return nil, fmt.Errorf("loading workspace: %w", err)
+	}
+
+	return &repo{ctx, ws}, nil
 }

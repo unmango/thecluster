@@ -1,14 +1,21 @@
 package workspace
 
 import (
+	"errors"
 	"io/fs"
+	"strings"
 
-	"github.com/spf13/afero"
+	"github.com/charmbracelet/log"
 	"github.com/unmango/go/iter"
 	"github.com/unmango/go/slices"
 	"github.com/unmango/thecluster/pkg"
 	"github.com/unmango/thecluster/pkg/context"
 	"github.com/unmango/thecluster/pkg/workspace/pulumi"
+)
+
+var (
+	loaders        = []pkg.Loader{pulumi.Loader}
+	ignorePrefixes = []string{".git", ".vscode", ".make"}
 )
 
 func List(ctx pkg.Context) (iter.Seq[pkg.Workspace], error) {
@@ -18,13 +25,17 @@ func List(ctx pkg.Context) (iter.Seq[pkg.Workspace], error) {
 			if err != nil {
 				return err
 			}
-			if !info.IsDir() || !Exists(ctx.Fs(), path) {
+			if !info.IsDir() || path == "" {
 				return nil
 			}
+			for _, p := range ignorePrefixes {
+				if strings.HasPrefix(path, p) {
+					return nil
+				}
+			}
 
-			w, err := pulumi.LoadWorkspace(ctx.Fs(), path)
-			if err != nil {
-				return err
+			if w, err := Load(ctx, path); err != nil {
+				log.Debugf("loading workspace: %s", err)
 			} else {
 				ws = append(ws, w)
 			}
@@ -39,6 +50,15 @@ func List(ctx pkg.Context) (iter.Seq[pkg.Workspace], error) {
 	return slices.Values(ws), nil
 }
 
-func Exists(fs afero.Fs, path string) bool {
-	return pulumi.IsWorkspace(fs, path)
+func Load(ctx pkg.Context, path string) (w pkg.Workspace, err error) {
+	errs := []error{}
+	for _, l := range loaders {
+		if w, err = l.Load(ctx, path); err == nil {
+			return
+		} else {
+			errs = append(errs, err)
+		}
+	}
+
+	return nil, errors.Join(errs...)
 }

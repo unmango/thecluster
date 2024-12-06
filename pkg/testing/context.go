@@ -14,10 +14,17 @@ type Context struct {
 	RootValue string
 }
 
-func (ctx *Context) Root() string {
-	return ctx.RootValue
+// Name implements pkg.Context.
+func (ctx *Context) Name() string {
+	panic("unimplemented")
 }
 
+// Parse implements pkg.Context.
+func (ctx *Context) Parse(string) (string, error) {
+	panic("unimplemented")
+}
+
+// Fs implements pkg.Context.
 func (ctx *Context) Fs() afero.Fs {
 	if ctx.FsValue == nil {
 		panic("unimplemented")

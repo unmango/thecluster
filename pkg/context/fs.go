@@ -8,5 +8,5 @@ import (
 )
 
 func Walk(ctx pkg.Context, fn filepath.WalkFunc) error {
-	return afero.Walk(ctx.Fs(), ctx.Root(), fn)
+	return afero.Walk(ctx.Fs(), "", fn)
 }
