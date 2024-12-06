@@ -15,9 +15,9 @@ var _ = Describe("Install", func() {
 	BeforeEach(func(ctx context.Context) {
 		pctx, err := pctx.LocalRepo(ctx)
 		Expect(err).NotTo(HaveOccurred())
-		path, err := pctx.Parse("cmd/thecluster/testdata/test_install")
+		path, err := pctx.Parse("cmd/testdata/test_install")
 		Expect(err).NotTo(HaveOccurred())
-		err = pctx.Fs().RemoveAll("cmd/thecluster/testdata/test_install/node_modules")
+		err = pctx.Fs().RemoveAll("cmd/testdata/test_install/node_modules")
 		Expect(err).NotTo(HaveOccurred())
 		ws, err = pulumi.Load(pctx, path)
 		Expect(err).NotTo(HaveOccurred())

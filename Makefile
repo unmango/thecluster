@@ -37,7 +37,7 @@ go.sum: go.mod ${GO_SRC} | bin/devops
 	go mod tidy
 
 bin/thecluster: go.mod ${GO_SRC} | bin/devops
-	go -C cmd/thecluster build -o ${WORKING_DIR}/$@
+	go -C cmd build -o ${WORKING_DIR}/$@
 
 bin/devops: .versions/devops
 	go install github.com/unmango/go/cmd/devops@v$(shell cat $<)
