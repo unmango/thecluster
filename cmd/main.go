@@ -13,6 +13,7 @@ var root = &cobra.Command{
 
 func main() {
 	root.AddCommand(
+		cmd.NewVersion(),
 		cmd.NewWorkspace(),
 	)
 
