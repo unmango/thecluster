@@ -2,13 +2,15 @@ package pulumi
 
 import (
 	"context"
+	"errors"
 	"fmt"
-	"os"
 	"path/filepath"
 
 	"github.com/pulumi/pulumi/sdk/v3/go/auto"
 	"github.com/spf13/afero"
 	"github.com/unmango/go/rx"
+	"github.com/unmango/go/rx/observable"
+	"github.com/unmango/go/rx/observer"
 	"github.com/unmango/go/rx/subject"
 	"github.com/unmango/thecluster/internal"
 	"github.com/unmango/thecluster/pkg"
@@ -21,11 +23,33 @@ type Workspace struct {
 }
 
 func (w *Workspace) Install(ctx context.Context) error {
-	return w.pulumi.Install(ctx, &auto.InstallOptions{
-		// TODO
-		Stdout: os.Stdout,
-		Stderr: os.Stderr,
+	stdout := observable.NewWriter()
+	stderr := observable.NewWriter()
+
+	sa := stdout.Subscribe(observer.Anonymous[[]byte]{
+		Next: func(b []byte) {
+			w.events.OnNext(pkg.ProgressEvent{
+				Message: string(b),
+			})
+		},
 	})
+	sb := stderr.Subscribe(observer.Anonymous[[]byte]{
+		Next: func(b []byte) {
+			w.events.OnError(errors.New(string(b)))
+		},
+	})
+
+	defer sa()
+	defer sb()
+
+	return w.pulumi.Install(ctx, &auto.InstallOptions{
+		Stdout: stdout,
+		Stderr: stderr,
+	})
+}
+
+func (w *Workspace) Subscribe(obs rx.Observer[pkg.ProgressEvent]) rx.Subscription {
+	return w.events.Subscribe(obs)
 }
 
 func IsWorkspace(fs afero.Fs, path string) bool {

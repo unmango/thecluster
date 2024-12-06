@@ -22,7 +22,7 @@ func (w writer) OnError(err error) {
 
 // OnNext implements rx.Observer.
 func (w writer) OnNext(e pkg.ProgressEvent) {
-	fmt.Fprintln(w, e.Message)
+	fmt.Fprint(w, e.Message)
 }
 
 func WriteTo(obs pkg.Observable, w io.Writer) rx.Subscription {

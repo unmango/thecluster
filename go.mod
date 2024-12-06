@@ -9,7 +9,7 @@ require (
 	github.com/pulumi/pulumi/sdk/v3 v3.142.0
 	github.com/spf13/afero v1.11.0
 	github.com/spf13/cobra v1.8.1
-	github.com/unmango/go v0.0.23
+	github.com/unmango/go v0.0.24
 )
 
 require (

@@ -1,9 +1,12 @@
 package workspace
 
 import (
+	"os"
+
 	"github.com/spf13/cobra"
 	"github.com/unmango/thecluster/internal"
 	"github.com/unmango/thecluster/pkg/context"
+	"github.com/unmango/thecluster/pkg/progress"
 	"github.com/unmango/thecluster/pkg/workspace"
 )
 
@@ -23,6 +26,9 @@ func NewInstall() *cobra.Command {
 			if err != nil {
 				internal.Fail(err)
 			}
+
+			sub := progress.WriteTo(workspace.Observe(w), os.Stdout)
+			defer sub()
 
 			if err = workspace.Install(ctx, w); err != nil {
 				internal.Fail(err)
