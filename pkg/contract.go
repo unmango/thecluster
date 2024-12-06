@@ -38,3 +38,7 @@ type ProgressEvent struct {
 type Observable interface {
 	rx.Observable[ProgressEvent]
 }
+
+type Config struct {
+	Deps map[string][]string `yaml:"deps"`
+}
