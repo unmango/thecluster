@@ -2,6 +2,7 @@ package workspace
 
 import (
 	"errors"
+	"fmt"
 	"io/fs"
 	"strings"
 
@@ -14,9 +15,17 @@ import (
 )
 
 var (
-	loaders        = []pkg.Loader{pulumi.Loader}
-	ignorePrefixes = []string{".git", ".vscode", ".make"}
+	loaders     = []pkg.Loader{pulumi.Loader}
+	ignoreParts = []string{".git", ".vscode", ".make", "node_modules"}
 )
+
+func Install(ctx pkg.Context, work pkg.Workspace) error {
+	if i, ok := work.(pkg.Installer); !ok {
+		return fmt.Errorf("workspace does not support installing dependencies: %s", work)
+	} else {
+		return i.Install(ctx)
+	}
+}
 
 func List(ctx pkg.Context) (iter.Seq[pkg.Workspace], error) {
 	ws := []pkg.Workspace{}
@@ -28,8 +37,8 @@ func List(ctx pkg.Context) (iter.Seq[pkg.Workspace], error) {
 			if !info.IsDir() || path == "" {
 				return nil
 			}
-			for _, p := range ignorePrefixes {
-				if strings.HasPrefix(path, p) {
+			for _, p := range ignoreParts {
+				if strings.Contains(path, p) {
 					return nil
 				}
 			}

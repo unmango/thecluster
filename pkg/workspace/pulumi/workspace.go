@@ -3,21 +3,29 @@ package pulumi
 import (
 	"context"
 	"fmt"
+	"os"
 	"path/filepath"
 
 	"github.com/pulumi/pulumi/sdk/v3/go/auto"
 	"github.com/spf13/afero"
+	"github.com/unmango/go/rx"
+	"github.com/unmango/go/rx/subject"
 	"github.com/unmango/thecluster/internal"
 	"github.com/unmango/thecluster/pkg"
 )
 
 type Workspace struct {
 	internal.Workspace
+	events rx.Subject[pkg.ProgressEvent]
 	pulumi auto.Workspace
 }
 
 func (w *Workspace) Install(ctx context.Context) error {
-	return w.pulumi.Install(ctx, nil)
+	return w.pulumi.Install(ctx, &auto.InstallOptions{
+		// TODO
+		Stdout: os.Stdout,
+		Stderr: os.Stderr,
+	})
 }
 
 func IsWorkspace(fs afero.Fs, path string) bool {
@@ -55,5 +63,9 @@ func Load(ctx pkg.Context, path string) (*Workspace, error) {
 		return nil, fmt.Errorf("loading workspace: %w", err)
 	}
 
-	return &Workspace{w, ws}, nil
+	return &Workspace{
+		Workspace: w,
+		pulumi:    ws,
+		events:    subject.New[pkg.ProgressEvent](),
+	}, nil
 }

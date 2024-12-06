@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/spf13/afero"
+	"github.com/unmango/go/rx"
 )
 
 type Context interface {
@@ -28,4 +29,12 @@ type Loader interface {
 
 type Installer interface {
 	Install(context.Context) error
+}
+
+type ProgressEvent struct {
+	Message string
+}
+
+type Observable interface {
+	rx.Observable[ProgressEvent]
 }

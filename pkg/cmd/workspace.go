@@ -12,7 +12,9 @@ func NewWorkspace() *cobra.Command {
 		Aliases: []string{"ws"},
 	}
 	cmd.AddCommand(
+		workspace.NewInstall(),
 		workspace.NewList(),
+		workspace.NewName(),
 	)
 
 	return cmd
