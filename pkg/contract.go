@@ -24,3 +24,7 @@ type Workspace interface {
 type Loader interface {
 	Load(Context, string) (Workspace, error)
 }
+
+type Installer interface {
+	Install(Context) error
+}
