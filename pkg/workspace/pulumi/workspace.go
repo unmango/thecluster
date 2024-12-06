@@ -1,6 +1,7 @@
 package pulumi
 
 import (
+	"context"
 	"fmt"
 	"path/filepath"
 
@@ -12,15 +13,11 @@ import (
 
 type Workspace struct {
 	internal.Workspace
+	pulumi auto.Workspace
 }
 
-func (w *Workspace) Install(ctx pkg.Context) error {
-	ws, err := auto.NewLocalWorkspace(ctx)
-	if err != nil {
-		return fmt.Errorf("loading workspace: %w", err)
-	}
-
-	return ws.Install(ctx, nil)
+func (w *Workspace) Install(ctx context.Context) error {
+	return w.pulumi.Install(ctx, nil)
 }
 
 func IsWorkspace(fs afero.Fs, path string) bool {
@@ -36,7 +33,7 @@ func IsWorkspace(fs afero.Fs, path string) bool {
 	return err == nil && !stat.IsDir()
 }
 
-func Load(ctx pkg.Context, path string) (pkg.Workspace, error) {
+func Load(ctx pkg.Context, path string) (*Workspace, error) {
 	rel, err := ctx.Parse(path)
 	if err != nil {
 		return nil, err
@@ -51,5 +48,12 @@ func Load(ctx pkg.Context, path string) (pkg.Workspace, error) {
 		return nil, fmt.Errorf("loading workspace: %w", err)
 	}
 
-	return &Workspace{w}, nil
+	ws, err := auto.NewLocalWorkspace(ctx,
+		auto.WorkDir(ctx.Path(rel)),
+	)
+	if err != nil {
+		return nil, fmt.Errorf("loading workspace: %w", err)
+	}
+
+	return &Workspace{w, ws}, nil
 }

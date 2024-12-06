@@ -9,6 +9,7 @@ import (
 type Context interface {
 	context.Context
 	Workspace
+	Path(string) string
 }
 
 type Named interface {
@@ -26,5 +27,5 @@ type Loader interface {
 }
 
 type Installer interface {
-	Install(Context) error
+	Install(context.Context) error
 }

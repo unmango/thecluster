@@ -2,6 +2,7 @@ package testing
 
 import (
 	"context"
+	"path/filepath"
 
 	"github.com/onsi/ginkgo/v2"
 	"github.com/spf13/afero"
@@ -14,6 +15,16 @@ type Context struct {
 	FsValue   afero.Fs
 	NameValue string
 	ParseFunc func(string) (string, error)
+	PathFunc  func(string) string
+}
+
+// Path implements pkg.Context.
+func (ctx *Context) Path(s string) string {
+	if ctx.PathFunc == nil {
+		panic("unimplemented")
+	}
+
+	return ctx.PathFunc(s)
 }
 
 // Name implements pkg.Context.
@@ -49,6 +60,12 @@ func TempDirContext(t ginkgo.GinkgoTInterface) *Context {
 		Context:   context.TODO(),
 		FsValue:   fs,
 		NameValue: tmp,
+		ParseFunc: func(s string) (string, error) {
+			return filepath.Rel(tmp, s)
+		},
+		PathFunc: func(s string) string {
+			return filepath.Join(tmp, s)
+		},
 	}
 }
 
@@ -59,6 +76,9 @@ func DefaultContext(ctx context.Context, fs afero.Fs) *Context {
 		NameValue: "Default",
 		ParseFunc: func(s string) (string, error) {
 			return internal.Workspace{}.Parse(s)
+		},
+		PathFunc: func(s string) string {
+			return internal.Workspace{}.Path(s)
 		},
 	}
 }
