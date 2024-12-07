@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/fs"
 	"path/filepath"
+	"slices"
 
 	"github.com/ianlewis/go-gitignore"
 	"github.com/spf13/afero"
@@ -11,8 +12,16 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-func Load(ctx pkg.Context) (*pkg.Config, error) {
-	data, err := afero.ReadFile(ctx.Fs(), ".thecluster.yml")
+var SupportedNames = []string{
+	".thecluster.yml",
+	".thecluster.yaml",
+	".thecluster",
+	"thecluster.yml",
+	"thecluster.yaml",
+}
+
+func Load(ctx pkg.Context, path string) (*pkg.Config, error) {
+	data, err := afero.ReadFile(ctx.Fs(), path)
 	if err != nil {
 		return nil, fmt.Errorf("reading config file: %w", err)
 	}
@@ -25,7 +34,7 @@ func Load(ctx pkg.Context) (*pkg.Config, error) {
 	}
 }
 
-func Locate(ctx pkg.Context) (path string, err error) {
+func Locate(ctx pkg.Context) (config string, err error) {
 	var ignore gitignore.GitIgnore
 	ignore, err = gitignore.NewFromFile(
 		ctx.Path(".gitignore"),
@@ -47,7 +56,13 @@ func Locate(ctx pkg.Context) (path string, err error) {
 				}
 			}
 
-			return nil
+			base := filepath.Base(path)
+			if !slices.Contains(SupportedNames, base) {
+				return nil
+			}
+
+			config = path
+			return filepath.SkipAll
 		},
 	)
 
