@@ -4,20 +4,30 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"path/filepath"
 
 	"github.com/pulumi/pulumi/sdk/v3/go/auto"
-	"github.com/spf13/afero"
 	"github.com/unmango/go/rx"
 	"github.com/unmango/go/rx/observable"
 	"github.com/unmango/go/rx/observer"
 	"github.com/unmango/go/rx/subject"
-	"github.com/unmango/thecluster/internal"
 	"github.com/unmango/thecluster/pkg"
 )
 
+var ProjectFiles = []string{
+	"Pulumi.yaml",
+	"Pulumi.yml",
+}
+
+type loader string
+
+var Loader loader = "Pulumi"
+
+func (loader) Load(ctx context.Context, project pkg.Project, path string) (pkg.Workspace, error) {
+	return Load(ctx, project, path)
+}
+
 type Workspace struct {
-	internal.Workspace
+	pkg.Workspace
 	events rx.Subject[pkg.ProgressEvent]
 	pulumi auto.Workspace
 }
@@ -52,44 +62,40 @@ func (w *Workspace) Subscribe(obs rx.Observer[pkg.ProgressEvent]) rx.Subscriptio
 	return w.events.Subscribe(obs)
 }
 
-func IsWorkspace(fs afero.Fs, path string) bool {
-	stat, err := fs.Stat(
-		filepath.Join(path, "Pulumi.yaml"),
-	)
-	if err != nil {
-		stat, err = fs.Stat(
-			filepath.Join(path, "Pulumi.yml"),
-		)
+func IsWorkspace(work pkg.Workspace) bool {
+	for _, name := range ProjectFiles {
+		path, err := work.Parse(name)
+		if err != nil {
+			continue
+		}
+
+		if stat, err := work.Stat(path); err == nil {
+			return !stat.IsDir()
+		}
 	}
 
-	return err == nil && !stat.IsDir()
+	return false
 }
 
-func Load(ctx pkg.Context, path string) (*Workspace, error) {
-	rel, err := ctx.Parse(path)
-	if err != nil {
-		return nil, err
-	}
-
-	if !IsWorkspace(ctx.Fs(), rel) {
-		return nil, fmt.Errorf("not a pulumi workspace: %s", path)
-	}
-
-	w, err := internal.LoadWorkspace(ctx.Fs(), rel)
+func Load(ctx context.Context, project pkg.Project, path string) (*Workspace, error) {
+	work, err := project.Load(ctx, path)
 	if err != nil {
 		return nil, fmt.Errorf("loading workspace: %w", err)
 	}
+	if !IsWorkspace(work) {
+		return nil, fmt.Errorf("not a pulumi workspace: %s", path)
+	}
 
-	ws, err := auto.NewLocalWorkspace(ctx,
-		auto.WorkDir(ctx.Path(rel)),
+	pulumi, err := auto.NewLocalWorkspace(ctx,
+		auto.WorkDir(path),
 	)
 	if err != nil {
 		return nil, fmt.Errorf("loading workspace: %w", err)
 	}
 
 	return &Workspace{
-		Workspace: w,
-		pulumi:    ws,
+		Workspace: work,
+		pulumi:    pulumi,
 		events:    subject.New[pkg.ProgressEvent](),
 	}, nil
 }

@@ -14,43 +14,46 @@ import (
 )
 
 var _ = Describe("Workspace", func() {
-	Describe("LoadWorkspace", func() {
-		var fsys afero.Fs
-
-		BeforeEach(func() {
-			fsys = afero.NewMemMapFs()
-		})
-
-		It("should load", func() {
-			err := fsys.Mkdir("test", os.ModeDir)
-			Expect(err).NotTo(HaveOccurred())
-
-			ws, err := internal.LoadWorkspace(fsys, "test")
-
-			Expect(err).NotTo(HaveOccurred())
-			Expect(ws.Name()).To(Equal("test"))
-		})
-	})
-
 	Describe("Parse", func() {
 		var ws pkg.Workspace
 
 		BeforeEach(func() {
 			fsys := afero.NewMemMapFs()
-			err := fsys.Mkdir("test", os.ModeDir)
+			err := fsys.Mkdir("/test", os.ModeDir)
 			Expect(err).NotTo(HaveOccurred())
-			ws, err = internal.LoadWorkspace(fsys, "test")
+			ws = internal.Workspace{fsys, "/test"}
 			Expect(err).NotTo(HaveOccurred())
 		})
 
-		It("should return a relative path", func() {
+		It("should return an absolute path", func() {
 			fn := func(p string) bool {
-				r, err := ws.Parse(p)
+				r, err := ws.Parse(filepath.Join("/test", p))
 
-				return err == nil && !filepath.IsAbs(r)
+				return err == nil && filepath.IsAbs(r)
 			}
 
 			Expect(quick.Check(fn, nil)).To(Succeed())
+		})
+
+		It("should join to root", func() {
+			r, err := ws.Parse("subdir")
+
+			Expect(err).NotTo(HaveOccurred())
+			Expect(r).To(Equal("/test/subdir"))
+		})
+
+		It("should return a rooted path", func() {
+			r, err := ws.Parse("/test/subdir")
+
+			Expect(err).NotTo(HaveOccurred())
+			Expect(r).To(Equal("/test/subdir"))
+		})
+
+		It("should join a non-matching path", func() {
+			r, err := ws.Parse("/subdir")
+
+			Expect(err).NotTo(HaveOccurred())
+			Expect(r).To(Equal("/test/subdir"))
 		})
 	})
 })

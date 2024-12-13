@@ -23,9 +23,9 @@ var _ = Describe("Loader", func() {
 			Expect(err).NotTo(HaveOccurred())
 			_, err = fs.Create(filepath.Join("test", f))
 			Expect(err).NotTo(HaveOccurred())
-			pctx := testing.DefaultContext(ctx, fs)
+			project := &testing.Project{Fs: fs}
 
-			w, err := pulumi.Loader.Load(pctx, "test")
+			w, err := pulumi.Loader.Load(ctx, project, "test")
 
 			Expect(err).NotTo(HaveOccurred())
 			Expect(w.Name()).To(Equal("test"))
@@ -38,9 +38,9 @@ var _ = Describe("Loader", func() {
 		Expect(err).NotTo(HaveOccurred())
 		_, err = fs.Create("test/Blah.yaml")
 		Expect(err).NotTo(HaveOccurred())
-		pctx := testing.DefaultContext(ctx, fs)
+		project := &testing.Project{Fs: fs}
 
-		_, err = pulumi.Loader.Load(pctx, "test")
+		_, err = pulumi.Loader.Load(ctx, project, "test")
 
 		Expect(err).To(MatchError("not a pulumi workspace: test"))
 	})

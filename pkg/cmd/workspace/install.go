@@ -5,8 +5,8 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/unmango/thecluster/internal"
-	"github.com/unmango/thecluster/pkg/context"
 	"github.com/unmango/thecluster/pkg/progress"
+	"github.com/unmango/thecluster/pkg/project"
 	"github.com/unmango/thecluster/pkg/workspace"
 )
 
@@ -17,12 +17,13 @@ func NewInstall() *cobra.Command {
 		Aliases: []string{"i"},
 		Args:    cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
-			ctx, err := context.LocalRepo(cmd.Context())
+			ctx := cmd.Context()
+			project, err := project.LocalGit(ctx)
 			if err != nil {
 				internal.Fail(err)
 			}
 
-			w, err := workspace.Load(ctx, args[0])
+			w, err := workspace.Load(ctx, project, args[0])
 			if err != nil {
 				internal.Fail(err)
 			}

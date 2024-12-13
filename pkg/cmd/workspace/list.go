@@ -5,7 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/unmango/thecluster/internal"
-	"github.com/unmango/thecluster/pkg/context"
+	"github.com/unmango/thecluster/pkg/project"
 	"github.com/unmango/thecluster/pkg/workspace"
 )
 
@@ -15,12 +15,13 @@ func NewList() *cobra.Command {
 		Short:   "List workspaces in the current git context",
 		Aliases: []string{"ls"},
 		Run: func(cmd *cobra.Command, args []string) {
-			ctx, err := context.LocalRepo(cmd.Context())
+			ctx := cmd.Context()
+			project, err := project.LocalGit(ctx)
 			if err != nil {
 				internal.Fail(err)
 			}
 
-			ws, err := workspace.List(ctx)
+			ws, err := workspace.List(ctx, project)
 			if err != nil {
 				internal.Fail(err)
 			}

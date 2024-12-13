@@ -7,7 +7,6 @@ import (
 	"slices"
 
 	"github.com/ianlewis/go-gitignore"
-	"github.com/spf13/afero"
 	"github.com/unmango/thecluster/pkg"
 	"gopkg.in/yaml.v3"
 )
@@ -20,8 +19,8 @@ var SupportedNames = []string{
 	"thecluster.yaml",
 }
 
-func Load(ctx pkg.Context, path string) (*pkg.Config, error) {
-	data, err := afero.ReadFile(ctx.Fs(), path)
+func Load(project pkg.Project, path string) (*pkg.Config, error) {
+	data, err := project.ReadFile(path)
 	if err != nil {
 		return nil, fmt.Errorf("reading config file: %w", err)
 	}
@@ -34,16 +33,16 @@ func Load(ctx pkg.Context, path string) (*pkg.Config, error) {
 	}
 }
 
-func Locate(ctx pkg.Context) (config string, err error) {
+func Locate(project pkg.Project) (config string, err error) {
 	var ignore gitignore.GitIgnore
 	ignore, err = gitignore.NewFromFile(
-		ctx.Path(".gitignore"),
+		filepath.Join(project.Path(), ".gitignore"),
 	)
 	if err != nil {
 		return
 	}
 
-	err = afero.Walk(ctx.Fs(), "",
+	err = project.Walk(
 		func(path string, info fs.FileInfo, err error) error {
 			if err != nil {
 				return err

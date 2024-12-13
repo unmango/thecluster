@@ -2,29 +2,32 @@ package pkg
 
 import (
 	"context"
+	"path/filepath"
 
 	"github.com/spf13/afero"
 	"github.com/unmango/go/rx"
 )
-
-type Context interface {
-	context.Context
-	Workspace
-	Path(string) string
-}
 
 type Named interface {
 	Name() string
 }
 
 type Workspace interface {
+	afero.Fs
 	Named
-	Fs() afero.Fs
 	Parse(string) (string, error)
+	ReadFile(string) ([]byte, error)
+	Walk(filepath.WalkFunc) error
+}
+
+type Project interface {
+	Workspace
+	Load(context.Context, string) (Workspace, error)
+	Path() string
 }
 
 type Loader interface {
-	Load(Context, string) (Workspace, error)
+	Load(context.Context, Project, string) (Workspace, error)
 }
 
 type Installer interface {
