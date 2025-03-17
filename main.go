@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/spf13/cobra"
 	"github.com/unmango/go/cli"
-	"github.com/unmango/thecluster/pkg/cmd"
+	"github.com/unmango/thecluster/cmd"
 )
 
 var root = &cobra.Command{
