@@ -3,13 +3,13 @@ _ := $(shell mkdir -p .make bin)
 WORKING_DIR := $(shell pwd)
 LOCALBIN    := ${WORKING_DIR}/bin
 
-DEVOPS   := go tool devctl
+DEVCTL   := go tool devctl
 GINKGO   := go tool ginkgo
 GOLANGCI := ${LOCALBIN}/golangci-lint
 
 export GOBIN := ${LOCALBIN}
 
-GO_SRC := $(shell $(DEVOPS) list --go)
+GO_SRC := $(shell $(DEVCTL) list --go)
 
 ifeq ($(CI),)
 TEST_FLAGS := --label-filter '!E2E'
@@ -22,7 +22,7 @@ test: .make/test
 tidy: go.sum
 lint: .make/lint
 format: .make/format
-init: bin/devops bin/golangci-lint
+init: bin/golangci-lint
 
 test_all:
 	$(GINKGO) run -r ./
@@ -49,7 +49,7 @@ bin/golangci-lint: .versions/golangci-lint
 	$(GOLANGCI) run $(sort $(dir $?))
 	@touch $@
 
-.make/format: $(shell $(DEVOPS) list --go --absolute)
+.make/format: $(shell $(DEVCTL) list --go --absolute)
 	go fmt $(sort $(dir $?))
 	@touch $@
 
