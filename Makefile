@@ -37,7 +37,7 @@ go.sum: go.mod ${GO_SRC}
 	go mod tidy
 
 bin/thecluster: go.mod ${GO_SRC}
-	go -C cmd build -o ${WORKING_DIR}/$@
+	go build -o ${WORKING_DIR}/$@
 
 bin/golangci-lint: .versions/golangci-lint
 	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b ${LOCALBIN} v$(shell cat $<)

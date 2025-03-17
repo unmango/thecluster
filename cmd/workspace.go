@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/unmango/thecluster/pkg/cmd/workspace"
+	"github.com/unmango/thecluster/cmd/workspace"
 )
 
 func NewWorkspace() *cobra.Command {
