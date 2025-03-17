@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/unmango/thecluster/internal"
+	"github.com/unmango/go/cli"
 	"github.com/unmango/thecluster/pkg/cmd"
 )
 
@@ -18,6 +18,6 @@ func main() {
 	)
 
 	if err := root.Execute(); err != nil {
-		internal.Fail(err)
+		cli.Fail(err)
 	}
 }

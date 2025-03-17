@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"github.com/unmango/thecluster/internal"
+	"github.com/unmango/go/cli"
 	"github.com/unmango/thecluster/pkg/project"
 	"github.com/unmango/thecluster/pkg/workspace"
 )
@@ -18,12 +18,12 @@ func NewList() *cobra.Command {
 			ctx := cmd.Context()
 			project, err := project.LocalGit(ctx)
 			if err != nil {
-				internal.Fail(err)
+				cli.Fail(err)
 			}
 
 			ws, err := workspace.List(ctx, project)
 			if err != nil {
-				internal.Fail(err)
+				cli.Fail(err)
 			}
 
 			for w := range ws {

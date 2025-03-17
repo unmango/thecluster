@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"github.com/unmango/thecluster/internal"
+	"github.com/unmango/go/cli"
 	"github.com/unmango/thecluster/pkg/project"
 	"github.com/unmango/thecluster/pkg/version"
 )
@@ -20,13 +20,13 @@ func NewVersion() *cobra.Command {
 			ctx := cmd.Context()
 			project, err := project.LocalGit(ctx)
 			if err != nil {
-				internal.Fail(err)
+				cli.Fail(err)
 			}
 
 			if len(args) == 1 {
 				version, err := version.Get(project, args[0])
 				if err != nil {
-					internal.Fail(err)
+					cli.Fail(err)
 				}
 
 				fmt.Println(version)

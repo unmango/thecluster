@@ -4,7 +4,7 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	"github.com/unmango/thecluster/internal"
+	"github.com/unmango/go/cli"
 	"github.com/unmango/thecluster/pkg/progress"
 	"github.com/unmango/thecluster/pkg/project"
 	"github.com/unmango/thecluster/pkg/workspace"
@@ -20,19 +20,19 @@ func NewInstall() *cobra.Command {
 			ctx := cmd.Context()
 			project, err := project.LocalGit(ctx)
 			if err != nil {
-				internal.Fail(err)
+				cli.Fail(err)
 			}
 
 			w, err := workspace.Load(ctx, project, args[0])
 			if err != nil {
-				internal.Fail(err)
+				cli.Fail(err)
 			}
 
 			sub := progress.WriteTo(workspace.Observe(w), os.Stdout)
 			defer sub()
 
 			if err = workspace.Install(ctx, w); err != nil {
-				internal.Fail(err)
+				cli.Fail(err)
 			}
 		},
 	}

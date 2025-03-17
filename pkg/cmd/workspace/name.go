@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"github.com/unmango/thecluster/internal"
+	"github.com/unmango/go/cli"
 	"github.com/unmango/thecluster/pkg/project"
 	"github.com/unmango/thecluster/pkg/workspace"
 )
@@ -19,12 +19,12 @@ func NewName() *cobra.Command {
 			ctx := cmd.Context()
 			project, err := project.LocalGit(ctx)
 			if err != nil {
-				internal.Fail(err)
+				cli.Fail(err)
 			}
 
 			w, err := workspace.Load(ctx, project, args[0])
 			if err != nil {
-				internal.Fail(err)
+				cli.Fail(err)
 			}
 
 			fmt.Println(w.Name())
