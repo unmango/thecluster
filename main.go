@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/spf13/cobra"
 	"github.com/unmango/go/cli"
-	"github.com/unmango/thecluster/cmd"
 )
 
 var root = &cobra.Command{
@@ -12,11 +11,6 @@ var root = &cobra.Command{
 }
 
 func main() {
-	root.AddCommand(
-		cmd.NewVersion(),
-		cmd.NewWorkspace(),
-	)
-
 	if err := root.Execute(); err != nil {
 		cli.Fail(err)
 	}
