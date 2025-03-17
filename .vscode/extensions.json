@@ -1,0 +1,8 @@
+{
+    "recommendations": [
+        "editorconfig.editorconfig",
+        "golang.go",
+        "timonwong.shellcheck",
+        "mkhl.direnv"
+    ]
+}
