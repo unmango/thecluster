@@ -19,3 +19,4 @@ jobs:
                 cache-dependency-path: go.sum
 
             - run: make test
+            - run: make lint

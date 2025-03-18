@@ -9,7 +9,7 @@ GOLANGCI := ${LOCALBIN}/golangci-lint
 
 export GOBIN := ${LOCALBIN}
 
-GO_SRC := $(shell $(DEVCTL) list --go)
+GO_SRC != $(DEVCTL) list --go
 
 ifeq ($(CI),)
 TEST_FLAGS := --label-filter '!E2E'
@@ -22,10 +22,13 @@ test: .make/test
 tidy: go.sum
 lint: .make/lint
 format: .make/format
-init: bin/golangci-lint
+init: build bin/golangci-lint
 
 test_all:
 	$(GINKGO) run -r ./
+
+golden:
+	$(GINKGO) run ./app -- -update
 
 %_suite_test.go: | bin/ginkgo
 	cd $(dir $@) && $(GINKGO) bootstrap
