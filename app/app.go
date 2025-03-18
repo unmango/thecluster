@@ -12,13 +12,15 @@ import (
 )
 
 type Model struct {
+	ctx        context.Context
 	filepicker filepicker.Model
 	Proj       *project.Project
 	err        error
 }
 
-func New() Model {
+func New(ctx context.Context) Model {
 	return Model{
+		ctx:        ctx,
 		filepicker: filepicker.New(),
 	}
 }
@@ -30,7 +32,7 @@ func (m Model) Init() tea.Cmd {
 	}
 
 	return tea.Batch(
-		load(context.Background()),
+		load(m.ctx),
 		m.filepicker.Init(),
 	)
 }
@@ -61,11 +63,11 @@ var header = lipgloss.NewStyle().
 
 // View implements tea.Model.
 func (m Model) View() string {
-	if m.Proj == nil {
-		m.err = fmt.Errorf("no Project")
-	}
 	if m.err != nil {
 		return m.err.Error()
+	}
+	if m.Proj == nil {
+		return "no Project"
 	}
 
 	var s strings.Builder

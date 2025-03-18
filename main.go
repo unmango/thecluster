@@ -14,7 +14,15 @@ import (
 )
 
 func runApp(ctx context.Context) {
-	p := tea.NewProgram(app.New(),
+	if len(os.Getenv("DEBUG")) > 0 {
+		f, err := tea.LogToFile("debug.log", "debug")
+		if err != nil {
+			cli.Fail(err)
+		}
+		defer f.Close()
+	}
+
+	p := tea.NewProgram(app.New(ctx),
 		tea.WithContext(ctx),
 	)
 	if _, err := p.Run(); err != nil {
