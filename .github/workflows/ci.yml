@@ -20,3 +20,7 @@ jobs:
 
             - run: make test
             - run: make lint
+
+            - name: Ensure worktree is clean
+              run: |
+                [ -n "$(git status --porcelain)" ] && exit 1
