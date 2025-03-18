@@ -1,41 +1,42 @@
 package app_test
 
 import (
+	"context"
 	"fmt"
-	"io"
 
-	"github.com/charmbracelet/x/exp/teatest/v2"
+	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/x/exp/teatest"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
 	"github.com/unmango/devctl/pkg/work"
 	"github.com/unmango/thecluster/app"
 	"github.com/unmango/thecluster/project"
+	"github.com/unmango/thecluster/testing/gtea"
 )
 
 var _ = Describe("App", Label("tea"), func() {
-	It("should render project path", func() {
-		m := &app.Model{Proj: &project.Project{
-			Dir: work.Directory("/test"),
-		}}
+	It("should render project path", func(ctx context.Context) {
+		m := app.New(ctx)
+		m.Proj = &project.Project{Dir: work.Directory("/tests")}
+
 		tm := teatest.NewTestModel(GinkgoTB(), m)
+		tm.Send(tea.KeyCtrlC)
 
-		result := tm.FinalOutput(GinkgoTB())
-
-		out, err := io.ReadAll(result)
-		Expect(err).NotTo(HaveOccurred())
-		teatest.RequireEqualOutput(GinkgoTB(), out)
+		gtea.RequireGolden(tm)
+		m = tm.FinalModel(GinkgoTB()).(app.Model)
+		Expect(m.Proj).NotTo(BeNil())
 	})
 
-	It("should render errors", func() {
-		m := &app.Model{}
-		m.Update(fmt.Errorf("Test error"))
+	It("should render errors", func(ctx context.Context) {
+		m := app.New(ctx)
+
 		tm := teatest.NewTestModel(GinkgoTB(), m)
+		tm.Send(fmt.Errorf("Test error"))
+		tm.Send(tea.KeyCtrlC)
 
-		result := tm.FinalOutput(GinkgoTB())
-
-		out, err := io.ReadAll(result)
-		Expect(err).NotTo(HaveOccurred())
-		teatest.RequireEqualOutput(GinkgoTB(), out)
+		gtea.RequireGolden(tm)
+		m = tm.FinalModel(GinkgoTB()).(app.Model)
+		Expect(m.Proj).To(BeNil())
 	})
 })

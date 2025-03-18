@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	tea "github.com/charmbracelet/bubbletea/v2"
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/mattn/go-isatty"
 	"github.com/spf13/cobra"
 	"github.com/unmango/go/cli"
@@ -14,7 +14,15 @@ import (
 )
 
 func runApp(ctx context.Context) {
-	p := tea.NewProgram(&app.Model{},
+	if len(os.Getenv("DEBUG")) > 0 {
+		f, err := tea.LogToFile("debug.log", "debug")
+		if err != nil {
+			cli.Fail(err)
+		}
+		defer f.Close()
+	}
+
+	p := tea.NewProgram(app.New(ctx),
 		tea.WithContext(ctx),
 	)
 	if _, err := p.Run(); err != nil {
