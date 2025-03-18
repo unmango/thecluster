@@ -19,10 +19,13 @@ func TestThecluster(t *testing.T) {
 var _ = BeforeSuite(func() {
 	wd, err := os.Getwd()
 	Expect(err).NotTo(HaveOccurred())
+
+	By("Compiling the CLI")
 	cliPath, err = gexec.Build(wd)
 	Expect(err).NotTo(HaveOccurred())
 })
 
 var _ = AfterSuite(func() {
+	By("Cleaning up build artifacts")
 	gexec.CleanupBuildArtifacts()
 })

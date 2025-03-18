@@ -10,6 +10,7 @@ tool (
 require (
 	github.com/charmbracelet/bubbletea/v2 v2.0.0-alpha.2.0.20250212173211-28e82b66f21c
 	github.com/charmbracelet/x/exp/teatest/v2 v2.0.0-20250317102001-c803e5cafd0b
+	github.com/mattn/go-isatty v0.0.20
 	github.com/onsi/ginkgo/v2 v2.23.0
 	github.com/onsi/gomega v1.36.2
 	github.com/spf13/cobra v1.9.1
@@ -40,7 +41,6 @@ require (
 	github.com/goware/urlx v0.3.2 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
-	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-runewidth v0.0.16 // indirect
 	github.com/muesli/cancelreader v0.2.2 // indirect
 	github.com/muesli/termenv v0.16.0 // indirect
