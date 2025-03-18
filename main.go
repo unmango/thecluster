@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	tea "github.com/charmbracelet/bubbletea/v2"
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/mattn/go-isatty"
 	"github.com/spf13/cobra"
 	"github.com/unmango/go/cli"
@@ -14,7 +14,7 @@ import (
 )
 
 func runApp(ctx context.Context) {
-	p := tea.NewProgram(&app.Model{},
+	p := tea.NewProgram(app.New(),
 		tea.WithContext(ctx),
 	)
 	if _, err := p.Run(); err != nil {
