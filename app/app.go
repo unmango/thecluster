@@ -14,8 +14,9 @@ import (
 type Model struct {
 	ctx        context.Context
 	filepicker filepicker.Model
-	Proj       *project.Project
 	err        error
+
+	Proj *project.Project
 }
 
 func New(ctx context.Context) Model {
@@ -58,8 +59,15 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, cmd
 }
 
-var header = lipgloss.NewStyle().
-	Padding(1, 2)
+var (
+	header = lipgloss.NewStyle().
+		Padding(1, 2)
+
+	selected = lipgloss.NewStyle().
+			Padding(0, 25).
+			Margin(1, 0).
+			Background(lipgloss.Color("#0f0f0f"))
+)
 
 // View implements tea.Model.
 func (m Model) View() string {
@@ -75,7 +83,7 @@ func (m Model) View() string {
 		fmt.Sprint("Project: ", m.Proj.Dir),
 	))
 	s.WriteString("\n")
-	s.WriteString(m.filepicker.View())
+	s.WriteString(selected.Render("TEST"))
 
 	return s.String()
 }

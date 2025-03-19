@@ -25,6 +25,9 @@ lint: .make/lint
 format: .make/format
 init: build bin/golangci-lint
 
+start: bin/thecluster
+	$<
+
 test_all:
 	$(GINKGO) run -r ./
 
