@@ -14,8 +14,8 @@ type Model struct {
 	Title string
 }
 
-func New(title string) Model {
-	return Model{Title: title}
+func New() Model {
+	return Model{}
 }
 
 func (m Model) Init() tea.Cmd {

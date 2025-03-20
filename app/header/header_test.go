@@ -12,7 +12,8 @@ import (
 
 var _ = Describe("Header", func() {
 	It("should render", func() {
-		m := header.New("TEST")
+		m := header.New()
+		m.Title = "TEST"
 
 		tm := teatest.NewTestModel(GinkgoTB(), m)
 		tm.Send(tea.Quit())
