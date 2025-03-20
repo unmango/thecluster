@@ -3,9 +3,10 @@ _ := $(shell mkdir -p .make bin)
 WORKING_DIR := $(shell pwd)
 LOCALBIN    := ${WORKING_DIR}/bin
 
-DEVCTL   := go tool devctl
-GINKGO   := go tool ginkgo
-GOLANGCI := ${LOCALBIN}/golangci-lint
+DEVCTL    := go tool devctl
+GINKGO    := go tool ginkgo
+GOLANGCI  := ${LOCALBIN}/golangci-lint
+WATCHEXEC := ${LOCALBIN}/watchexec
 
 export GOBIN := ${LOCALBIN}
 
@@ -30,6 +31,10 @@ test_all:
 golden:
 	$(GINKGO) run ./app -- -update
 
+# https://github.com/charmbracelet/bubbletea/issues/150#issuecomment-2492038498
+watch: | bin/watchexec
+	$(WATCHEXEC) -e go -r --wrap-process session -- 'go run .'
+
 %_suite_test.go: | bin/ginkgo
 	cd $(dir $@) && $(GINKGO) bootstrap
 
@@ -41,6 +46,9 @@ go.sum: go.mod ${GO_SRC}
 
 bin/thecluster: go.mod ${GO_SRC}
 	go build -o ${WORKING_DIR}/$@
+
+bin/watchexec: | .make/watchexec/watchexec
+	ln -s ${CURDIR}/$| ${CURDIR}/$@
 
 bin/golangci-lint: .versions/golangci-lint
 	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b ${LOCALBIN} v$(shell cat $<)
@@ -59,3 +67,14 @@ bin/golangci-lint: .versions/golangci-lint
 .make/test: ${GO_SRC}
 	$(GINKGO) run ${TEST_FLAGS} $(sort $(dir $?))
 	@touch $@
+
+.make/watchexec/watchexec: .make/watchexec.tar.xz
+	mkdir -p $(dir $@) && tar -C $(dir $@) -xvf $< --strip-components=1
+	@touch $@
+
+.make/watchexec.tar.xz: .versions/watchexec
+ifeq ($(shell go env GOOS),darwin)
+	curl -Lo $@ https://github.com/watchexec/watchexec/releases/download/$(shell $(DEVCTL) $<)/watchexec-$(shell $(DEVCTL) v watchexec)-aarch64-apple-darwin.tar.xz
+else
+	curl -Lo $@ https://github.com/watchexec/watchexec/releases/download/$(shell $(DEVCTL) $<)/watchexec-$(shell $(DEVCTL) v watchexec)-x86_64-unknown-linux-gnu.tar.xz
+endif
