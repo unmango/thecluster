@@ -32,13 +32,13 @@ test_all:
 	$(GINKGO) run -r ./
 
 golden:
-	$(GINKGO) run ./app -- -update
+	$(GINKGO) run -r ./app -- -update
 
 # https://github.com/charmbracelet/bubbletea/issues/150#issuecomment-2492038498
 watch: | bin/watchexec
 	$(WATCHEXEC) -e go -r --wrap-process session -- 'go run .'
 
-%_suite_test.go: | bin/ginkgo
+%_suite_test.go:
 	cd $(dir $@) && $(GINKGO) bootstrap
 
 $(GO_SRC:%.go=%_test.go): %_test.go:
