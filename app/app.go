@@ -75,7 +75,7 @@ func (m Model) View() string {
 	var s strings.Builder
 	s.WriteString(m.header.View())
 	s.WriteString("\n")
-	s.WriteString(selected.Render("TEST"))
+	s.WriteString(selected.Render("\u221f TEST"))
 
 	return s.String()
 }
