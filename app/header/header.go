@@ -6,8 +6,7 @@ import (
 )
 
 var (
-	header = lipgloss.NewStyle().
-		Padding(1, 2)
+	header = lipgloss.NewStyle()
 )
 
 type Model struct {

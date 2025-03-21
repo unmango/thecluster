@@ -36,7 +36,7 @@ golden:
 
 # https://github.com/charmbracelet/bubbletea/issues/150#issuecomment-2492038498
 watch: | bin/watchexec
-	$(WATCHEXEC) -e go -r --wrap-process session -- 'go run .'
+	$(WATCHEXEC) -e go -r --clear --wrap-process session -- 'go run .'
 
 %_suite_test.go:
 	cd $(dir $@) && $(GINKGO) bootstrap

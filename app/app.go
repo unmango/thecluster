@@ -7,21 +7,24 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/unmango/thecluster/app/header"
+	"github.com/unmango/thecluster/app/selector"
 	"github.com/unmango/thecluster/project"
 )
 
 type Model struct {
-	ctx    context.Context
-	header header.Model
-	err    error
+	ctx      context.Context
+	header   header.Model
+	selector selector.Model
+	err      error
 
 	Proj *project.Project
 }
 
 func New(ctx context.Context) Model {
 	return Model{
-		ctx:    ctx,
-		header: header.New(),
+		ctx:      ctx,
+		header:   header.New(),
+		selector: selector.New(),
 	}
 }
 
@@ -57,10 +60,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 var (
-	selected = lipgloss.NewStyle().
-		Padding(0, 25).
-		Margin(1, 0).
-		Background(lipgloss.Color("#0f0f0f"))
+	container = lipgloss.NewStyle()
 )
 
 // View implements tea.Model.
@@ -75,9 +75,9 @@ func (m Model) View() string {
 	var s strings.Builder
 	s.WriteString(m.header.View())
 	s.WriteString("\n")
-	s.WriteString(selected.Render("\u221f TEST"))
+	s.WriteString(m.selector.View())
 
-	return s.String()
+	return container.Render(s.String())
 }
 
 type loaded *project.Project
