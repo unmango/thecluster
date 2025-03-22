@@ -45,6 +45,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case loaded:
 		m.Proj = msg
 		m.header.Title = "Project: " + msg.Dir.Path()
+		return m, m.readDir
 	case error:
 		m.err = msg
 		return m, tea.Quit
@@ -56,6 +57,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 
 	var cmd tea.Cmd
+	m.selector, cmd = m.selector.Update(msg)
 	return m, cmd
 }
 
@@ -90,4 +92,18 @@ func load(ctx context.Context) tea.Cmd {
 			return loaded(proj)
 		}
 	}
+}
+
+func (m Model) readDir() tea.Msg {
+	ws, err := m.Proj.Workspaces(m.ctx)
+	if err != nil {
+		return err
+	}
+
+	items := []string{}
+	for w := range ws {
+		items = append(items, w.WorkDir())
+	}
+
+	return selector.Items(items)
 }
