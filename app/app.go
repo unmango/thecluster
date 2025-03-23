@@ -2,26 +2,31 @@ package app
 
 import (
 	"context"
+	"fmt"
 	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/unmango/thecluster/app/header"
+	"github.com/unmango/thecluster/app/selector"
+	"github.com/unmango/thecluster/app/workspace"
 	"github.com/unmango/thecluster/project"
 )
 
 type Model struct {
-	ctx    context.Context
-	header header.Model
-	err    error
+	ctx      context.Context
+	header   header.Model
+	selector selector.Model
+	err      error
 
 	Proj *project.Project
 }
 
 func New(ctx context.Context) Model {
 	return Model{
-		ctx:    ctx,
-		header: header.New(),
+		ctx:      ctx,
+		header:   header.New(),
+		selector: selector.New(),
 	}
 }
 
@@ -42,6 +47,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case loaded:
 		m.Proj = msg
 		m.header.Title = "Project: " + msg.Dir.Path()
+		return m, m.readDir
 	case error:
 		m.err = msg
 		return m, tea.Quit
@@ -53,20 +59,18 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 
 	var cmd tea.Cmd
+	m.selector, cmd = m.selector.Update(msg)
 	return m, cmd
 }
 
 var (
-	selected = lipgloss.NewStyle().
-		Padding(0, 25).
-		Margin(1, 0).
-		Background(lipgloss.Color("#0f0f0f"))
+	container = lipgloss.NewStyle()
 )
 
 // View implements tea.Model.
 func (m Model) View() string {
 	if m.err != nil {
-		return m.err.Error()
+		return fmt.Sprintln(m.err.Error())
 	}
 	if m.Proj == nil {
 		return "no Project"
@@ -75,9 +79,9 @@ func (m Model) View() string {
 	var s strings.Builder
 	s.WriteString(m.header.View())
 	s.WriteString("\n")
-	s.WriteString(selected.Render("\u221f TEST"))
+	s.WriteString(m.selector.View())
 
-	return s.String()
+	return container.Render(s.String())
 }
 
 type loaded *project.Project
@@ -90,4 +94,20 @@ func load(ctx context.Context) tea.Cmd {
 			return loaded(proj)
 		}
 	}
+}
+
+func (m Model) readDir() tea.Msg {
+	ws, err := m.Proj.Workspaces()
+	if err != nil {
+		return err
+	}
+
+	items := []tea.Model{}
+	for w := range ws {
+		items = append(items,
+			workspace.New(m.ctx, w),
+		)
+	}
+
+	return selector.Items(items)
 }

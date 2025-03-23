@@ -1,4 +1,4 @@
-package header_test
+package selector_test
 
 import (
 	"testing"
@@ -9,9 +9,9 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-func TestHeader(t *testing.T) {
+func TestSelector(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Header Suite")
+	RunSpecs(t, "Selector Suite")
 }
 
 var _ = BeforeSuite(func() {
