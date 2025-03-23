@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"slices"
 	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -100,10 +101,5 @@ func (m Model) readDir() tea.Msg {
 		return err
 	}
 
-	items := []string{}
-	for w := range ws {
-		items = append(items, w)
-	}
-
-	return selector.Items(items)
+	return selector.Items(slices.Collect(ws))
 }

@@ -2,16 +2,14 @@ package project_test
 
 import (
 	"context"
-	"os"
 	"path/filepath"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-	"github.com/pulumi/pulumi/sdk/v3/go/auto"
-	"github.com/pulumi/pulumi/sdk/v3/go/common/workspace"
 
 	"github.com/unmango/devctl/pkg/work"
 	"github.com/unmango/thecluster/project"
+	"github.com/unmango/thecluster/testing"
 )
 
 var _ = Describe("Project", func() {
@@ -64,17 +62,7 @@ var _ = Describe("Project", func() {
 			BeforeEach(func(ctx context.Context) {
 				dir = GinkgoT().TempDir()
 				appPath = filepath.Join(dir, "app")
-				Expect(os.Mkdir(appPath, os.ModePerm)).To(Succeed())
-
-				_, err := auto.NewLocalWorkspace(ctx,
-					auto.WorkDir(appPath),
-					auto.Project(workspace.Project{
-						Name:    "TEST",
-						Runtime: workspace.NewProjectRuntimeInfo("nodejs", nil),
-					}),
-				)
-				Expect(err).NotTo(HaveOccurred())
-				Expect(filepath.Join(appPath, "Pulumi.yaml")).To(BeARegularFile())
+				testing.PulumiWorkspace(ctx, appPath)
 			})
 
 			It("should list the workspace", func(ctx context.Context) {
