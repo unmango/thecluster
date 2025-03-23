@@ -1,6 +1,7 @@
 package selector
 
 import (
+	"fmt"
 	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -11,8 +12,7 @@ var (
 	item = lipgloss.NewStyle().
 		Background(lipgloss.Color("#0f0f0f"))
 
-	selected = lipgloss.NewStyle().
-			Background(lipgloss.Color("#f0f0f0"))
+	selected = lipgloss.NewStyle()
 )
 
 type Model struct {
@@ -23,7 +23,7 @@ type Model struct {
 func New() Model {
 	return Model{
 		items:    []tea.Model{},
-		selected: 1,
+		selected: 0,
 	}
 }
 
@@ -65,10 +65,11 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 func (m Model) View() string {
 	b := strings.Builder{}
 	for idx, i := range m.items {
+		row := fmt.Sprint("\u221f ", i.View())
 		if idx == m.selected {
-			b.WriteString(selected.Render(i.View()))
+			b.WriteString(selected.Render(row + " <"))
 		} else {
-			b.WriteString(item.Render(i.View()))
+			b.WriteString(item.Render(row))
 		}
 		b.WriteString("\n")
 	}
