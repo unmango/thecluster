@@ -9,6 +9,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/unmango/thecluster/app/header"
 	"github.com/unmango/thecluster/app/selector"
+	"github.com/unmango/thecluster/app/workspace"
 	"github.com/unmango/thecluster/project"
 )
 
@@ -101,20 +102,12 @@ func (m Model) readDir() tea.Msg {
 		return err
 	}
 
-	names := []string{}
+	items := []tea.Model{}
 	for w := range ws {
-		work, err := w.Load(m.ctx)
-		if err != nil {
-			return err
-		}
-
-		p, err := work.ProjectSettings(m.ctx)
-		if err != nil {
-			return err
-		}
-
-		names = append(names, string(p.Name))
+		items = append(items,
+			workspace.New(m.ctx, w),
+		)
 	}
 
-	return selector.Items(names)
+	return selector.Items(items)
 }

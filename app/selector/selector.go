@@ -16,13 +16,13 @@ var (
 )
 
 type Model struct {
-	items    []string
+	items    []tea.Model
 	selected int
 }
 
 func New() Model {
 	return Model{
-		items:    []string{},
+		items:    []tea.Model{},
 		selected: 1,
 	}
 }
@@ -31,12 +31,17 @@ func (m Model) Init() tea.Cmd {
 	return nil
 }
 
-type Items []string
+type Items []tea.Model
 
 func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
+	var cmds []tea.Cmd
+
 	switch msg := msg.(type) {
 	case Items:
 		m.items = msg
+		for _, i := range m.items {
+			cmds = append(cmds, i.Init())
+		}
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "up":
@@ -48,16 +53,22 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 		m.selected = min(len(m.items)-1, m.selected)
 	}
 
-	return m, nil
+	for i, item := range m.items {
+		var cmd tea.Cmd
+		m.items[i], cmd = item.Update(msg)
+		cmds = append(cmds, cmd)
+	}
+
+	return m, tea.Batch(cmds...)
 }
 
 func (m Model) View() string {
 	b := strings.Builder{}
 	for idx, i := range m.items {
 		if idx == m.selected {
-			b.WriteString(selected.Render(i))
+			b.WriteString(selected.Render(i.View()))
 		} else {
-			b.WriteString(item.Render(i))
+			b.WriteString(item.Render(i.View()))
 		}
 		b.WriteString("\n")
 	}
