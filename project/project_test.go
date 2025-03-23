@@ -71,7 +71,7 @@ var _ = Describe("Project", func() {
 				Expect(err).NotTo(HaveOccurred())
 				ws, err := proj.Workspaces()
 				Expect(err).NotTo(HaveOccurred())
-				Expect(ws).To(ConsistOf(appPath))
+				Expect(ws).To(ConsistOf(project.Workspace(appPath)))
 			})
 		})
 	})

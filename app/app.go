@@ -2,7 +2,7 @@ package app
 
 import (
 	"context"
-	"slices"
+	"fmt"
 	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -69,7 +69,7 @@ var (
 // View implements tea.Model.
 func (m Model) View() string {
 	if m.err != nil {
-		return m.err.Error()
+		return fmt.Sprintln(m.err.Error())
 	}
 	if m.Proj == nil {
 		return "no Project"
@@ -101,5 +101,20 @@ func (m Model) readDir() tea.Msg {
 		return err
 	}
 
-	return selector.Items(slices.Collect(ws))
+	names := []string{}
+	for w := range ws {
+		work, err := w.Load(m.ctx)
+		if err != nil {
+			return err
+		}
+
+		p, err := work.ProjectSettings(m.ctx)
+		if err != nil {
+			return err
+		}
+
+		names = append(names, string(p.Name))
+	}
+
+	return selector.Items(names)
 }

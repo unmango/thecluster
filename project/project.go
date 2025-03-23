@@ -40,8 +40,8 @@ func LoadFrom(path string) (*Project, error) {
 	}
 }
 
-func (p *Project) Workspaces() (iter.Seq[string], error) {
-	ws := iter.Empty[string]()
+func (p *Project) Workspaces() (iter.Seq[Workspace], error) {
+	ws := iter.Empty[Workspace]()
 	err := p.walk(func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
 			return err
@@ -50,7 +50,7 @@ func (p *Project) Workspaces() (iter.Seq[string], error) {
 			return err
 		}
 		if _, err := workspace.DetectProjectPathFrom(path); err == nil {
-			ws = iter.Append(ws, path)
+			ws = iter.Append(ws, Workspace(path))
 		}
 
 		return nil
