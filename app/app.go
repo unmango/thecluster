@@ -95,14 +95,14 @@ func load(ctx context.Context) tea.Cmd {
 }
 
 func (m Model) readDir() tea.Msg {
-	ws, err := m.Proj.Workspaces(m.ctx)
+	ws, err := m.Proj.Workspaces()
 	if err != nil {
 		return err
 	}
 
 	items := []string{}
 	for w := range ws {
-		items = append(items, w.WorkDir())
+		items = append(items, w)
 	}
 
 	return selector.Items(items)
