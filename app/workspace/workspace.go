@@ -32,6 +32,7 @@ func (m Model) Init() tea.Cmd {
 type (
 	loaded   auto.Workspace
 	settings *workspace.Project
+	loadErr  struct{ error }
 )
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -41,7 +42,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, m.psettings
 	case settings:
 		m.settings = msg
-	case error:
+	case loadErr:
 		m.err = msg
 	}
 
@@ -50,7 +51,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m Model) View() string {
 	if m.err != nil {
-		return fmt.Sprintln(m.err)
+		return m.err.Error()
 	}
 	if m.pwork == nil || m.settings == nil {
 		return "Loading..."
@@ -71,7 +72,7 @@ func (m Model) load() tea.Msg {
 func (m Model) psettings() tea.Msg {
 	p, err := m.pwork.ProjectSettings(m.ctx)
 	if err != nil {
-		return err
+		return loadErr{err}
 	}
 
 	return settings(p)

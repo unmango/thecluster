@@ -36,6 +36,12 @@ type Items []tea.Model
 func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	var cmds []tea.Cmd
 
+	for i, item := range m.items {
+		var cmd tea.Cmd
+		m.items[i], cmd = item.Update(msg)
+		cmds = append(cmds, cmd)
+	}
+
 	switch msg := msg.(type) {
 	case Items:
 		m.items = msg
@@ -51,12 +57,6 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 		}
 		m.selected = max(0, m.selected)
 		m.selected = min(len(m.items)-1, m.selected)
-	}
-
-	for i, item := range m.items {
-		var cmd tea.Cmd
-		m.items[i], cmd = item.Update(msg)
-		cmds = append(cmds, cmd)
 	}
 
 	return m, tea.Batch(cmds...)

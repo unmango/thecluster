@@ -51,7 +51,7 @@ func runApp(ctx context.Context) {
 		defer f.Close()
 	}
 
-	p := tea.NewProgram(app.New(ctx),
+	p := tea.NewProgram(app.New(),
 		tea.WithContext(ctx),
 	)
 	if _, err := p.Run(); err != nil {

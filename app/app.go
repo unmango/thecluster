@@ -2,9 +2,9 @@ package app
 
 import (
 	"context"
-	"fmt"
 	"strings"
 
+	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/unmango/thecluster/app/selector"
@@ -13,24 +13,20 @@ import (
 )
 
 type Model struct {
-	ctx      context.Context
-	selector selector.Model
-	err      error
+	ws  list.Model
+	err error
 
 	Proj *project.Project
 }
 
-func New(ctx context.Context) Model {
-	return Model{
-		ctx:      ctx,
-		selector: selector.New(),
-	}
+func New() Model {
+	return Model{}
 }
 
 // Init implements tea.Model.
 func (m Model) Init() tea.Cmd {
 	if m.Proj == nil {
-		return load(m.ctx)
+		return load(context.Background())
 	}
 
 	return nil
@@ -52,19 +48,16 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 
 	var cmd tea.Cmd
-	m.selector, cmd = m.selector.Update(msg)
 	return m, cmd
 }
 
 var (
 	container = lipgloss.NewStyle()
+	errorMsg  = lipgloss.NewStyle().Background(lipgloss.Color("#FF0000"))
 )
 
 // View implements tea.Model.
 func (m Model) View() string {
-	if m.err != nil {
-		return fmt.Sprintln(m.err)
-	}
 	if m.Proj == nil {
 		return "no Project"
 	}
@@ -72,7 +65,11 @@ func (m Model) View() string {
 	var s strings.Builder
 	s.WriteString(m.Proj.Dir.Path())
 	s.WriteString("\n")
-	s.WriteString(m.selector.View())
+	s.WriteString(m.ws.View())
+
+	if m.err != nil {
+		s.WriteString("\n" + errorMsg.Render(m.err.Error()))
+	}
 
 	return container.Render(s.String())
 }
@@ -95,10 +92,11 @@ func (m Model) readDir() tea.Msg {
 		return err
 	}
 
+	ctx := context.Background()
 	items := []tea.Model{}
 	for w := range ws {
 		items = append(items,
-			workspace.New(m.ctx, w),
+			workspace.New(ctx, w),
 		)
 	}
 

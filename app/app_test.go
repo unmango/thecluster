@@ -1,7 +1,6 @@
 package app_test
 
 import (
-	"context"
 	"fmt"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -16,8 +15,8 @@ import (
 )
 
 var _ = Describe("App", Label("tea"), func() {
-	It("should render project path", func(ctx context.Context) {
-		m := app.New(ctx)
+	It("should render project path", func() {
+		m := app.New()
 		m.Proj = &project.Project{Dir: work.Directory("/tests")}
 
 		tm := teatest.NewTestModel(GinkgoTB(), m)
@@ -28,15 +27,14 @@ var _ = Describe("App", Label("tea"), func() {
 		Expect(m.View()).To(ContainSubstring("/tests"))
 	})
 
-	It("should render errors", func(ctx context.Context) {
-		m := app.New(ctx)
+	It("should render errors", func() {
+		m := app.New()
+		m.Proj = &project.Project{}
 
 		tm := teatest.NewTestModel(GinkgoTB(), m)
 		tm.Send(fmt.Errorf("Test error"))
 		tm.Send(tea.Quit())
 
 		gtea.RequireGolden(tm)
-		m = tm.FinalModel(GinkgoTB()).(app.Model)
-		Expect(m.Proj).To(BeNil())
 	})
 })
