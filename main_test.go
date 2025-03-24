@@ -24,4 +24,16 @@ var _ = Describe("Main", func() {
 		Eventually(ses.Out).Should(gbytes.Say(wd))
 		Eventually(ses).Should(gexec.Exit(0))
 	})
+
+	It("should change to the given directory", func(ctx context.Context) {
+		dir := GinkgoT().TempDir()
+		cmd := exec.CommandContext(ctx, cliPath, "-C", dir)
+
+		ses, err := gexec.Start(cmd, GinkgoWriter, GinkgoWriter)
+
+		Expect(err).NotTo(HaveOccurred())
+		Eventually(ses.Out).Should(gbytes.Say("Project: "))
+		Eventually(ses.Out).Should(gbytes.Say(dir))
+		Eventually(ses).Should(gexec.Exit(0))
+	})
 })
