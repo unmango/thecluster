@@ -21,11 +21,11 @@ var _ = Describe("App", Label("tea"), func() {
 		m.Proj = &project.Project{Dir: work.Directory("/tests")}
 
 		tm := teatest.NewTestModel(GinkgoTB(), m)
-		tm.Send(tea.KeyCtrlC)
+		tm.Send(tea.Quit())
 
 		gtea.RequireGolden(tm)
 		m = tm.FinalModel(GinkgoTB()).(app.Model)
-		Expect(m.Proj).NotTo(BeNil())
+		Expect(m.View()).To(ContainSubstring("/tests"))
 	})
 
 	It("should render errors", func(ctx context.Context) {
@@ -33,7 +33,7 @@ var _ = Describe("App", Label("tea"), func() {
 
 		tm := teatest.NewTestModel(GinkgoTB(), m)
 		tm.Send(fmt.Errorf("Test error"))
-		tm.Send(tea.KeyCtrlC)
+		tm.Send(tea.Quit())
 
 		gtea.RequireGolden(tm)
 		m = tm.FinalModel(GinkgoTB()).(app.Model)
