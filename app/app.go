@@ -7,7 +7,6 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/unmango/thecluster/app/header"
 	"github.com/unmango/thecluster/app/selector"
 	"github.com/unmango/thecluster/app/workspace"
 	"github.com/unmango/thecluster/project"
@@ -15,7 +14,6 @@ import (
 
 type Model struct {
 	ctx      context.Context
-	header   header.Model
 	selector selector.Model
 	err      error
 
@@ -25,20 +23,17 @@ type Model struct {
 func New(ctx context.Context) Model {
 	return Model{
 		ctx:      ctx,
-		header:   header.New(),
 		selector: selector.New(),
 	}
 }
 
 // Init implements tea.Model.
 func (m Model) Init() tea.Cmd {
-	if m.Proj != nil {
-		return tea.Quit
+	if m.Proj == nil {
+		return load(m.ctx)
 	}
 
-	return tea.Batch(
-		load(m.ctx),
-	)
+	return nil
 }
 
 // Update implements tea.Model.
@@ -46,11 +41,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case loaded:
 		m.Proj = msg
-		m.header.Title = "Project: " + msg.Dir.Path()
 		return m, m.readDir
 	case error:
 		m.err = msg
-		return m, tea.Quit
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "ctrl+c", "q":
@@ -70,14 +63,14 @@ var (
 // View implements tea.Model.
 func (m Model) View() string {
 	if m.err != nil {
-		return fmt.Sprintln(m.err.Error())
+		return fmt.Sprintln(m.err)
 	}
 	if m.Proj == nil {
 		return "no Project"
 	}
 
 	var s strings.Builder
-	s.WriteString(m.header.View())
+	s.WriteString(m.Proj.Dir.Path())
 	s.WriteString("\n")
 	s.WriteString(m.selector.View())
 
