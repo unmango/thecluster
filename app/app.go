@@ -13,16 +13,14 @@ import (
 )
 
 type Model struct {
-	ctx      context.Context
 	selector selector.Model
 	err      error
 
 	Proj *project.Project
 }
 
-func New(ctx context.Context) Model {
+func New() Model {
 	return Model{
-		ctx:      ctx,
 		selector: selector.New(),
 	}
 }
@@ -30,7 +28,7 @@ func New(ctx context.Context) Model {
 // Init implements tea.Model.
 func (m Model) Init() tea.Cmd {
 	if m.Proj == nil {
-		return load(m.ctx)
+		return load(context.Background())
 	}
 
 	return nil
@@ -95,10 +93,11 @@ func (m Model) readDir() tea.Msg {
 		return err
 	}
 
+	ctx := context.Background()
 	items := []tea.Model{}
 	for w := range ws {
 		items = append(items,
-			workspace.New(m.ctx, w),
+			workspace.New(ctx, w),
 		)
 	}
 
