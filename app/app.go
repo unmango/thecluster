@@ -7,7 +7,6 @@ import (
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/unmango/thecluster/app/selector"
 	"github.com/unmango/thecluster/app/workspace"
 	"github.com/unmango/thecluster/project"
 )
@@ -35,9 +34,11 @@ func (m Model) Init() tea.Cmd {
 // Update implements tea.Model.
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
-	case loaded:
+	case projectLoaded:
 		m.Proj = msg
 		return m, m.readDir
+	case itemsLoaded:
+		m.ws = list.New(msg, workspace.ItemDelegate{}, 20, 14)
 	case error:
 		m.err = msg
 	case tea.KeyMsg:
@@ -74,14 +75,17 @@ func (m Model) View() string {
 	return container.Render(s.String())
 }
 
-type loaded *project.Project
+type (
+	projectLoaded *project.Project
+	itemsLoaded   []list.Item
+)
 
 func load(ctx context.Context) tea.Cmd {
 	return func() tea.Msg {
 		if proj, err := project.Load(ctx); err != nil {
 			return err
 		} else {
-			return loaded(proj)
+			return projectLoaded(proj)
 		}
 	}
 }
@@ -93,12 +97,12 @@ func (m Model) readDir() tea.Msg {
 	}
 
 	ctx := context.Background()
-	items := []tea.Model{}
+	items := []list.Item{}
 	for w := range ws {
 		items = append(items,
 			workspace.New(ctx, w),
 		)
 	}
 
-	return selector.Items(items)
+	return itemsLoaded(items)
 }

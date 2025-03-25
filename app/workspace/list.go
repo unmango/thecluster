@@ -33,7 +33,7 @@ func (ItemDelegate) Update(msg tea.Msg, m *list.Model) tea.Cmd {
 		i := m.Items()[msg.index].(Model)
 		n, cmd := i.Update(msg.msg)
 		m.SetItem(msg.index, n.(Model))
-		return cmd
+		return tag(msg.index, cmd)
 	}
 
 	return nil
@@ -41,4 +41,10 @@ func (ItemDelegate) Update(msg tea.Msg, m *list.Model) tea.Cmd {
 
 func (m Model) FilterValue() string {
 	return m.work.String()
+}
+
+func tag(i int, cmd tea.Cmd) tea.Cmd {
+	return func() tea.Msg {
+		return tagged{i, cmd()}
+	}
 }
