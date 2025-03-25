@@ -30,9 +30,7 @@ func (i item) FilterValue() string {
 	return string(i)
 }
 
-type Model list.Model
-
-func New(workspaces []project.Workspace) Model {
+func New(workspaces []project.Workspace) list.Model {
 	var (
 		items  []list.Item
 		height int = len(workspaces)
@@ -44,7 +42,5 @@ func New(workspaces []project.Workspace) Model {
 		width = max(width, len(x))
 	}
 
-	m := list.New(items, delegate{}, width, height)
-
-	return Model(m)
+	return list.New(items, delegate{}, width, height)
 }
