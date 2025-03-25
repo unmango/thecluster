@@ -1,4 +1,4 @@
-package list
+package workspace
 
 import (
 	"fmt"
@@ -30,7 +30,7 @@ func (i item) FilterValue() string {
 	return string(i)
 }
 
-func New(workspaces []project.Workspace) list.Model {
+func NewList(workspaces []project.Workspace) list.Model {
 	var (
 		items  []list.Item
 		height int = len(workspaces)
@@ -42,5 +42,11 @@ func New(workspaces []project.Workspace) list.Model {
 		width = max(width, len(x))
 	}
 
-	return list.New(items, delegate{}, width, height)
+	m := list.New(items, delegate{}, width, height)
+	m.SetShowFilter(false)
+	m.SetShowHelp(false)
+	m.SetShowStatusBar(false)
+	m.SetShowTitle(false) // Might switch to this later
+
+	return m
 }
