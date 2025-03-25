@@ -17,7 +17,7 @@ import (
 
 var _ = Describe("App", Label("tea"), func() {
 	It("should render project path", func(ctx context.Context) {
-		m := app.New(ctx)
+		m := app.New()
 		m.Proj = &project.Project{Dir: work.Directory("/tests")}
 
 		tm := teatest.NewTestModel(GinkgoTB(), m)
@@ -29,7 +29,7 @@ var _ = Describe("App", Label("tea"), func() {
 	})
 
 	It("should render errors", func(ctx context.Context) {
-		m := app.New(ctx)
+		m := app.New()
 
 		tm := teatest.NewTestModel(GinkgoTB(), m)
 		tm.Send(fmt.Errorf("Test error"))
