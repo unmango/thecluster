@@ -38,7 +38,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case loaded:
 		m.Proj = msg.proj
-		m.selector = workspace.NewList(msg.ws)
+		m.selector = workspace.NewList(m.Proj, msg.ws)
 	case error:
 		m.err = msg
 	case tea.KeyMsg:
