@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/x/exp/teatest"
+	tea "github.com/charmbracelet/bubbletea/v2"
+	"github.com/charmbracelet/x/exp/teatest/v2"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
