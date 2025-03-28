@@ -1,78 +1,94 @@
 package selector
 
 import (
+	"context"
 	"fmt"
+	"slices"
 	"strings"
 
+	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/unmango/thecluster/app/workspace"
+	"github.com/unmango/thecluster/project"
 )
 
 var (
-	item = lipgloss.NewStyle().
-		Background(lipgloss.Color("#0f0f0f"))
-
-	selected = lipgloss.NewStyle()
+	container = lipgloss.NewStyle()
 )
 
 type Model struct {
-	items    []tea.Model
-	selected int
+	selector list.Model
+	err      error
+
+	Proj *project.Project
 }
 
 func New() Model {
-	return Model{
-		items:    []tea.Model{},
-		selected: 0,
-	}
+	return Model{}
 }
 
 func (m Model) Init() tea.Cmd {
+	if m.Proj == nil {
+		return load
+	}
+
 	return nil
 }
 
-type Items []tea.Model
-
-func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
-	var cmds []tea.Cmd
-
+func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
-	case Items:
-		m.items = msg
-		for _, i := range m.items {
-			cmds = append(cmds, i.Init())
-		}
+	case loaded:
+		m.Proj = msg.proj
+		m.selector = workspace.NewList(m.Proj, msg.ws)
+	case error:
+		m.err = msg
 	case tea.KeyMsg:
 		switch msg.String() {
-		case "up":
-			m.selected -= 1
-		case "down":
-			m.selected += 1
+		case "ctrl+c", "q":
+			return m, tea.Quit
 		}
-		m.selected = max(0, m.selected)
-		m.selected = min(len(m.items)-1, m.selected)
 	}
 
-	for i, item := range m.items {
-		var cmd tea.Cmd
-		m.items[i], cmd = item.Update(msg)
-		cmds = append(cmds, cmd)
+	var cmd tea.Cmd
+	if m.Proj != nil {
+		m.selector, cmd = m.selector.Update(msg)
 	}
-
-	return m, tea.Batch(cmds...)
+	return m, cmd
 }
 
 func (m Model) View() string {
-	b := strings.Builder{}
-	for idx, i := range m.items {
-		row := fmt.Sprint("\u221f ", i.View())
-		if idx == m.selected {
-			b.WriteString(selected.Render(row + " <"))
-		} else {
-			b.WriteString(item.Render(row))
-		}
-		b.WriteString("\n")
+	if m.err != nil {
+		return fmt.Sprintln(m.err)
+	}
+	if m.Proj == nil {
+		return "no Project"
 	}
 
-	return b.String()
+	var s strings.Builder
+	s.WriteString(m.Proj.Dir.Path())
+	s.WriteString("\n")
+	s.WriteString(m.selector.View())
+
+	return container.Render(s.String())
+}
+
+type loaded struct {
+	proj *project.Project
+	ws   []project.Workspace
+}
+
+func load() tea.Msg {
+	ctx := context.Background()
+	proj, err := project.Load(ctx)
+	if err != nil {
+		return err
+	}
+
+	ws, err := proj.Workspaces()
+	if err != nil {
+		return err
+	}
+
+	return loaded{proj, slices.Collect(ws)}
 }
