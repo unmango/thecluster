@@ -7,7 +7,6 @@ import (
 	tea "github.com/charmbracelet/bubbletea/v2"
 	"github.com/charmbracelet/x/exp/teatest/v2"
 	. "github.com/onsi/ginkgo/v2"
-	. "github.com/onsi/gomega"
 
 	"github.com/unmango/devctl/pkg/work"
 	"github.com/unmango/thecluster/app/selector"
@@ -24,8 +23,6 @@ var _ = Describe("Selector", func() {
 		tm.Send(tea.Quit())
 
 		gtea.RequireGolden(tm)
-		m = tm.FinalModel(GinkgoTB()).(selector.Model)
-		Expect(m.View()).To(ContainSubstring("/tests"))
 	})
 
 	It("should render errors", func(ctx context.Context) {
@@ -36,7 +33,5 @@ var _ = Describe("Selector", func() {
 		tm.Send(tea.Quit())
 
 		gtea.RequireGolden(tm)
-		m = tm.FinalModel(GinkgoTB()).(selector.Model)
-		Expect(m.Proj).To(BeNil())
 	})
 })

@@ -36,7 +36,7 @@ func (delegate) Render(w io.Writer, m list.Model, index int, listItem list.Item)
 }
 
 func (delegate) Update(msg tea.Msg, m *list.Model) tea.Cmd {
-	return nil
+	return func() tea.Msg { return nil }
 }
 
 type item struct {
