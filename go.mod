@@ -8,13 +8,14 @@ tool (
 )
 
 require (
+	github.com/aymanbagabas/go-udiff v0.2.0
 	github.com/charmbracelet/bubbles v0.16.1
 	github.com/charmbracelet/bubbletea v1.1.2
 	github.com/charmbracelet/lipgloss v1.1.0
 	github.com/charmbracelet/x/exp/teatest v0.0.0-20250317102001-c803e5cafd0b
 	github.com/mattn/go-isatty v0.0.20
 	github.com/muesli/termenv v0.16.0
-	github.com/onsi/ginkgo/v2 v2.23.0
+	github.com/onsi/ginkgo/v2 v2.23.3
 	github.com/onsi/gomega v1.36.2
 	github.com/pulumi/pulumi/sdk/v3 v3.157.0
 	github.com/spf13/afero v1.14.0
@@ -34,7 +35,6 @@ require (
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
 	github.com/atotto/clipboard v0.1.4 // indirect
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
-	github.com/aymanbagabas/go-udiff v0.2.0 // indirect
 	github.com/blang/semver v3.5.1+incompatible // indirect
 	github.com/charmbracelet/colorprofile v0.2.3-0.20250311203215-f60798e515dc // indirect
 	github.com/charmbracelet/log v0.4.1 // indirect
