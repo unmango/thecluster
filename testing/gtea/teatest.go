@@ -1,6 +1,15 @@
 package gtea
 
-import tea "github.com/charmbracelet/bubbletea"
+import (
+	"fmt"
+	"reflect"
+
+	tea "github.com/charmbracelet/bubbletea"
+)
+
+type TestModel struct {
+	m tea.Model
+}
 
 type finalModel struct {
 	m tea.Model
@@ -35,6 +44,11 @@ func HaveFinalOutput(expected []byte) finalOutput {
 
 // Match implements types.GomegaMatcher.
 func (g *finalOutput) Match(actual interface{}) (success bool, err error) {
+	_, ok := actual.(*TestModel)
+	if !ok {
+		return false, fmt.Errorf("expected a *gtea.TestModel, got %v", reflect.TypeOf(actual))
+	}
+
 	panic("unimplemented")
 }
 
