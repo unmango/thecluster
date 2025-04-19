@@ -16,7 +16,7 @@ require (
 	github.com/mattn/go-isatty v0.0.20
 	github.com/muesli/termenv v0.16.0
 	github.com/onsi/ginkgo/v2 v2.23.3
-	github.com/onsi/gomega v1.36.3
+	github.com/onsi/gomega v1.37.0
 	github.com/pulumi/pulumi/sdk/v3 v3.159.0
 	github.com/spf13/afero v1.14.0
 	github.com/spf13/cobra v1.9.1
