@@ -12,7 +12,7 @@ require (
 	github.com/charmbracelet/bubbles v0.21.0
 	github.com/charmbracelet/bubbletea v1.3.4
 	github.com/charmbracelet/lipgloss v1.1.0
-	github.com/charmbracelet/x/exp/teatest v0.0.0-20250331185309-2c96f2c3a435
+	github.com/charmbracelet/x/exp/teatest v0.0.0-20250417172821-98fd948af1b1
 	github.com/mattn/go-isatty v0.0.20
 	github.com/muesli/termenv v0.16.0
 	github.com/onsi/ginkgo/v2 v2.23.3
