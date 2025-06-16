@@ -11,7 +11,7 @@ import (
 
 	"github.com/unmango/devctl/pkg/work"
 	"github.com/unmango/thecluster/app/selector"
-	"github.com/unmango/thecluster/project"
+	"github.com/unmango/thecluster/pkg/project"
 	"github.com/unmango/thecluster/testing/gtea"
 )
 

@@ -11,7 +11,7 @@ import (
 	"github.com/unmango/devctl/pkg/work"
 	"github.com/unmango/go/cli"
 	"github.com/unmango/thecluster/app"
-	"github.com/unmango/thecluster/project"
+	"github.com/unmango/thecluster/pkg/project"
 )
 
 type Options struct {

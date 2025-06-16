@@ -7,7 +7,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/pulumi/pulumi/sdk/v3/go/auto"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/workspace"
-	"github.com/unmango/thecluster/project"
+	"github.com/unmango/thecluster/pkg/project"
 )
 
 type Model struct {

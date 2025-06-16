@@ -10,7 +10,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/unmango/thecluster/app/workspace"
-	"github.com/unmango/thecluster/project"
+	"github.com/unmango/thecluster/pkg/project"
 )
 
 var (
