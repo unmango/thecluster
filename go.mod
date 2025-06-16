@@ -20,7 +20,7 @@ require (
 	github.com/pulumi/pulumi/sdk/v3 v3.177.0
 	github.com/spf13/afero v1.14.0
 	github.com/spf13/cobra v1.9.1
-	github.com/unmango/devctl v0.1.7
+	github.com/unmango/devctl v0.1.8
 	github.com/unmango/go v0.4.1
 )
 
