@@ -2,3 +2,4 @@ bin/
 .make/
 .envrc
 *.test
+.DS_Store
