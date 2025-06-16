@@ -1,0 +1,7 @@
+edition = "2023";
+
+package dev.unmango.thecluster.v1alpha1;
+
+message App {
+  string name = 1;
+}

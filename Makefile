@@ -1,10 +1,14 @@
 _ := $(shell mkdir -p .make bin)
 
+$(info ${.FEATURES})
+
 WORKING_DIR := $(shell pwd)
 LOCALBIN    := ${WORKING_DIR}/bin
 
-DEVCTL    := go tool devctl
-GINKGO    := go tool ginkgo
+GO        := go
+BUF       := $(GO) tool buf
+DEVCTL    := $(GO) tool devctl
+GINKGO    := $(GO) tool ginkgo
 GOLANGCI  := ${LOCALBIN}/golangci-lint
 WATCHEXEC := ${LOCALBIN}/watchexec
 
@@ -45,16 +49,19 @@ $(GO_SRC:%.go=%_test.go): %_test.go:
 	cd $(dir $@) && $(GINKGO) generate $(notdir $*)
 
 go.sum: go.mod ${GO_SRC}
-	go mod tidy
+	$(GO) mod tidy
 
 bin/thecluster: go.mod ${GO_SRC}
-	go build -o ${WORKING_DIR}/$@
+	$(GO) build -o ${WORKING_DIR}/$@
 
 bin/watchexec: | .make/watchexec/watchexec
 	ln -s ${CURDIR}/$| ${CURDIR}/$@
 
 bin/golangci-lint: .versions/golangci-lint
 	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b ${LOCALBIN} v$(shell cat $<)
+
+bin/buf: go.mod
+	$(GO) install github.com/bufbuild/buf/cmd/buf
 
 .envrc: hack/example.envrc
 	cp $< $@
@@ -64,7 +71,7 @@ bin/golangci-lint: .versions/golangci-lint
 	@touch $@
 
 .make/format: $(shell $(DEVCTL) list --go --absolute)
-	go fmt $(sort $(dir $?))
+	$(GO) fmt $(sort $(dir $?))
 	@touch $@
 
 .make/test: ${GO_SRC}

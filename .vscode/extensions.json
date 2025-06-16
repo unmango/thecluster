@@ -3,6 +3,7 @@
         "editorconfig.editorconfig",
         "golang.go",
         "timonwong.shellcheck",
-        "mkhl.direnv"
+        "mkhl.direnv",
+        "bufbuild.vscode-buf"
     ]
 }
