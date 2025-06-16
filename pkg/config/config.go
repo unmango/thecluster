@@ -17,7 +17,7 @@ func Global() contract.Config {
 	return global
 }
 
-type config struct {
+type Config struct {
 	viper *viper.Viper
 }
 
@@ -26,10 +26,10 @@ func New() contract.Config {
 	v.SetEnvPrefix("THECLUSTER")
 	v.AutomaticEnv()
 
-	return &config{v}
+	return &Config{v}
 }
 
 // TargetRepository implements contract.Config.
-func (c *config) TargetRepository() string {
+func (c *Config) TargetRepository() string {
 	return c.viper.GetString(TargetRepositoryKey)
 }
