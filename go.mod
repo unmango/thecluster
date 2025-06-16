@@ -8,7 +8,7 @@ tool (
 )
 
 require (
-	github.com/aymanbagabas/go-udiff v0.2.0
+	github.com/aymanbagabas/go-udiff v0.3.1
 	github.com/charmbracelet/bubbles v0.21.0
 	github.com/charmbracelet/bubbletea v1.3.5
 	github.com/charmbracelet/lipgloss v1.1.0
