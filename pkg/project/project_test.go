@@ -8,8 +8,8 @@ import (
 	. "github.com/onsi/gomega"
 
 	"github.com/unmango/devctl/pkg/work"
-	"github.com/unmango/thecluster/project"
-	"github.com/unmango/thecluster/testing"
+	"github.com/unmango/thecluster/pkg/project"
+	"github.com/unmango/thecluster/pkg/testing"
 )
 
 var _ = Describe("Project", func() {
