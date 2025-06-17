@@ -5,6 +5,10 @@ import (
 	"time"
 )
 
+type Client[T any] interface {
+	Get(context.Context, Request) (T, error)
+}
+
 type Request interface {
 	Name() string
 }
