@@ -1,7 +1,5 @@
 _ := $(shell mkdir -p .make bin)
 
-$(info ${.FEATURES})
-
 WORKING_DIR := $(shell pwd)
 LOCALBIN    := ${WORKING_DIR}/bin
 
@@ -14,7 +12,8 @@ WATCHEXEC := ${LOCALBIN}/watchexec
 
 export GOBIN := ${LOCALBIN}
 
-GO_SRC != $(DEVCTL) list --go
+GO_SRC    != $(DEVCTL) list --go
+PROTO_SRC != $(DEVCTL) list --proto
 
 ifeq ($(CI),)
 TEST_FLAGS := --label-filter '!E2E'
@@ -23,6 +22,7 @@ TEST_FLAGS := --github-output --race --trace
 endif
 
 build: bin/thecluster
+generate gen: .make/buf-generate
 test: .make/test
 tidy: go.sum
 lint: .make/lint
@@ -65,6 +65,10 @@ bin/buf: go.mod
 
 .envrc: hack/example.envrc
 	cp $< $@
+
+.make/buf-generate: buf.gen.yaml ${PROTO_SRC}
+	$(BUF) generate .
+	@touch $@
 
 .make/lint: ${GO_SRC} | bin/golangci-lint
 	$(GOLANGCI) run $(sort $(dir $?))

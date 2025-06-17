@@ -2,6 +2,12 @@ version: v2
 
 managed:
   enabled: true
+  override:
+    - file_option: go_package_prefix
+      value: github.com/unmango/thecluster
 
 plugins:
-  - out: gen
+  - remote: buf.build/protocolbuffers/go:v1.36.6
+    out: gen
+    opt:
+      - paths=source_relative

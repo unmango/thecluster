@@ -1,4 +1,4 @@
-package app
+package appv1alpha1
 
 import (
 	"context"
@@ -8,11 +8,13 @@ import (
 )
 
 type Reconciler struct {
-	cfg contract.Config
+	repo string
 }
 
-func FromConfig(cfg contract.Config) contract.App {
-	return &Reconciler{cfg}
+func FromConfig(cfg contract.Config) contract.Reconciler {
+	return &Reconciler{
+		repo: cfg.TargetRepository(),
+	}
 }
 
 // Reconcile implements contract.App.

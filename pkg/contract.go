@@ -3,9 +3,8 @@ package thecluster
 import "github.com/unmango/thecluster/pkg/contract"
 
 type (
-	App      = contract.App
 	Config   = contract.Config
 	Request  = contract.Request
-	Resource = contract.Resource
+	Resource = contract.Reconciler
 	Result   = contract.Result
 )
