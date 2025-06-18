@@ -4,4 +4,5 @@ package dev.unmango.thecluster.v1alpha1;
 
 message App {
   string name = 1;
+  string repository = 2;
 }

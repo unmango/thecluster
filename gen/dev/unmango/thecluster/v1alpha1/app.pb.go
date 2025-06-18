@@ -24,6 +24,7 @@ const (
 type App struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Name          *string                `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
+	Repository    *string                `protobuf:"bytes,2,opt,name=repository" json:"repository,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -65,13 +66,23 @@ func (x *App) GetName() string {
 	return ""
 }
 
+func (x *App) GetRepository() string {
+	if x != nil && x.Repository != nil {
+		return *x.Repository
+	}
+	return ""
+}
+
 var File_dev_unmango_thecluster_v1alpha1_app_proto protoreflect.FileDescriptor
 
 const file_dev_unmango_thecluster_v1alpha1_app_proto_rawDesc = "" +
 	"\n" +
-	")dev/unmango/thecluster/v1alpha1/app.proto\x12\x1fdev.unmango.thecluster.v1alpha1\"\x19\n" +
+	")dev/unmango/thecluster/v1alpha1/app.proto\x12\x1fdev.unmango.thecluster.v1alpha1\"9\n" +
 	"\x03App\x12\x12\n" +
-	"\x04name\x18\x01 \x01(\tR\x04nameB\xa0\x02\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1e\n" +
+	"\n" +
+	"repository\x18\x02 \x01(\tR\n" +
+	"repositoryB\xa0\x02\n" +
 	"#com.dev.unmango.thecluster.v1alpha1B\bAppProtoP\x01ZPgithub.com/unmango/thecluster/dev/unmango/thecluster/v1alpha1;theclusterv1alpha1\xa2\x02\x03DUT\xaa\x02\x1fDev.Unmango.Thecluster.V1alpha1\xca\x02\x1fDev\\Unmango\\Thecluster\\V1alpha1\xe2\x02+Dev\\Unmango\\Thecluster\\V1alpha1\\GPBMetadata\xea\x02\"Dev::Unmango::Thecluster::V1alpha1b\beditionsp\xe8\a"
 
 var (
