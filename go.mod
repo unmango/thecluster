@@ -2,7 +2,7 @@ module github.com/unmango/thecluster
 
 go 1.24.3
 
-toolchain go1.24.4
+toolchain go1.24.5
 
 tool (
 	github.com/onsi/ginkgo/v2/ginkgo
