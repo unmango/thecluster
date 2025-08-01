@@ -53,6 +53,8 @@ github.com/charmbracelet/x/exp/teatest v0.0.0-20250611152503-f53cdd7e01ef h1:Wcf
 github.com/charmbracelet/x/exp/teatest v0.0.0-20250611152503-f53cdd7e01ef/go.mod h1:MhV4atqUTcHvdaA7Qbkgb0Tvvr+BrH6IW7/i2XW39R8=
 github.com/charmbracelet/x/exp/teatest v0.0.0-20250630141444-821143405392 h1:8xBU5lpmeOuNOM78x3HZmPNuH77A4gihp1SxGzQIrDs=
 github.com/charmbracelet/x/exp/teatest v0.0.0-20250630141444-821143405392/go.mod h1:MhV4atqUTcHvdaA7Qbkgb0Tvvr+BrH6IW7/i2XW39R8=
+github.com/charmbracelet/x/exp/teatest v0.0.0-20250725211024-d60e1b0112b2 h1:d7EQ2IuVgMm2vR4GxKn7bVcbZAgbj9J9jM3D9S/41Mw=
+github.com/charmbracelet/x/exp/teatest v0.0.0-20250725211024-d60e1b0112b2/go.mod h1:RXbDhep1qKL/SEz2IuOhOUrsNHDKGqRmGks1nZStKyU=
 github.com/charmbracelet/x/term v0.2.1 h1:AQeHeLZ1OqSXhrAWpYUtZyX1T3zVxfpZuEQMIQaGIAQ=
 github.com/charmbracelet/x/term v0.2.1/go.mod h1:oQ4enTYFV7QN4m0i9mzHrViD7TQKvNEEkHUMCmsxdUg=
 github.com/cheggaaa/pb v1.0.29 h1:FckUN5ngEk2LpvuG0fw1GEFx6LtyY2pWI/Z2QgCnEYo=
